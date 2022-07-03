@@ -1,7 +1,7 @@
 #include <FirebaseESP8266.h>
 #include <ESP8266WiFi.h>
 #include "DHT.h"
-char* usuario = "TP-LINK_247C";
+char* usuario = "S20";
 char* senha = "12345678";
 bool statusConexao = false;
 char* host = "https://esp8266-82004-default-rtdb.firebaseio.com/";
@@ -15,19 +15,16 @@ int comodos[] = {02,04,05,12,13,14};
 //              Sala D2
 //              Garagem D1
 //              Cozinha D6
-//              Banhiiro D7
+//              Banheiro D7
 //              Rele D5
 
-#define sensorTemperatura 15
-#define DHTTYPE    DHT11 
+#define sensorDHT11 0
+#define DHTTYPE DHT11 
 
-DHT dht(sensorTemperatura, DHTTYPE);
+DHT dht(sensorDHT11, DHTTYPE);
 
-float t = 0.0;
-float U = 0.0;
-
-void ligaArcondicionado() {
-  if(analogRead(sensorTemperatura > 20)) {
+void ligaVentilador() {
+  if(analogRead(sensorDHT11 > 20)) {
     digitalWrite(14,HIGH);
   }
 }
@@ -36,7 +33,7 @@ void setup() {
 
   Serial.begin(9600);
   dht.begin();
-  for (int i = 0; i < sizeof(comodos) -1; i++) {
+  for (int i = 0; i < 6; i++) {
     pinMode(comodos[i], OUTPUT);
   }
   WiFi.mode(WIFI_STA);
@@ -52,7 +49,7 @@ void setup() {
 
 void loop() {
 
-  //DHT.read11(sensorTemperatura); //LÊ AS INFORMAÇÕES DO SENSOR
+ // DHT.read11(sensorDHT11); //LÊ AS INFORMAÇÕES DO SENSOR
   Serial.print("Umidade: "); //IMPRIME O TEXTO NA SERIAL
   Serial.print(dht.readHumidity()); //IMPRIME NA SERIAL O VALOR DE UMIDADE MEDIDO
   Serial.print("%"); //ESCREVE O TEXTO EM SEGUIDA
@@ -61,7 +58,6 @@ void loop() {
   Serial.println("*C"); //IMPRIME O TEXTO NA SERIAL
   delay(2000);
 
-  
   Firebase.get(minhaBase, "rele/status");
   int rele = minhaBase.intData();
   Firebase.get(minhaBase, "quarto/status");
@@ -75,9 +71,8 @@ void loop() {
   Firebase.get(minhaBase, "cozinha/status");
   int cozinha = minhaBase.intData();
 
-  int novoStatus[] = {quarto, sala, garagem, cozinha, cozinha, rele};
-      
-  for (int i = 0; i < sizeof(novoStatus) -1; i++ ){
+  int novoStatus[] = {quarto, sala, garagem, cozinha, banheiro, rele};
+  for (int i = 0; i < 6; i++ ){   
     if (novoStatus[i] == 0) {
       digitalWrite(comodos[i],LOW);
     } else {
