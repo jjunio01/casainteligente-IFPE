@@ -4,8 +4,8 @@
 char* usuario = "S20";
 char* senha = "12345678";
 bool statusConexao = false;
-char* host = "MEU HOST";
-char* token = "MEU TOKEN";
+char* host = "MEU - HOST";
+char* token = "MEU - TOKEN";
 
 FirebaseData minhaBase;
 
