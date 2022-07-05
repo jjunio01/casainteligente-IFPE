@@ -4,8 +4,8 @@
 char* usuario = "S20";
 char* senha = "12345678";
 bool statusConexao = false;
-char* host = "https://esp8266-82004-default-rtdb.firebaseio.com/";
-char* token = "o5r4y9BSVdio6bLBwXy6F4NnVIFP7tUWq6kV7zQ4";
+char* host = "MEU HOST";
+char* token = "MEU TOKEN";
 
 FirebaseData minhaBase;
 
@@ -56,8 +56,10 @@ void loop() {
   Serial.print(" / Temperatura: "); //IMPRIME O TEXTO NA SERIAL
   Serial.print(dht.readTemperature(), 0); //IMPRIME NA SERIAL O VALOR DE UMIDADE MEDIDO E REMOVE A PARTE DECIMAL
   Serial.println("*C"); //IMPRIME O TEXTO NA SERIAL
-  delay(2000);
 
+  Firebase.setFloat(minhaBase, "temperatura/valor", dht.readTemperature());
+  Firebase.setFloat(minhaBase, "umidade/valor", dht.readHumidity());
+  
   Firebase.get(minhaBase, "rele/status");
   int rele = minhaBase.intData();
   Firebase.get(minhaBase, "quarto/status");
